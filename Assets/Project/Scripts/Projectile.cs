@@ -22,8 +22,12 @@ public class Projectile : MonoBehaviour
         // FIX: Changed '==' to '.Contains()' to account for Unity adding "(Clone)"
         if (other.gameObject.name.Contains("TrackingEnemy"))
         {
+        
+          
             // Destroy the enemy cube
             Destroy(other.gameObject);
+
+            ScoreManager.Instance.AddScore(1); // Adds 1 point!
 
             // Destroy the bullet itself
             Destroy(gameObject);

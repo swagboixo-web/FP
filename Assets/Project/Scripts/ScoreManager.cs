@@ -1,19 +1,19 @@
 using UnityEngine;
-using TMPro; // Crucial package needed to talk to TextMeshPro elements
+using TMPro; // Crucial for TextMeshPro!
 
 public class ScoreManager : MonoBehaviour
 {
-    // Static instance allows any other script to easily send points here
+    // A "static instance" lets any other script easily find this ScoreManager
     public static ScoreManager Instance;
 
     [Header("UI Components")]
-    [SerializeField] private TextMeshProUGUI scoreText;
+    public TextMeshProUGUI scoreText; // Drag your ScoreText object here
 
-    private int currentScore = 0;
+    private int score = 0;
 
     void Awake()
     {
-        // Set up the Singleton pattern instance
+        // Set up the singleton instance
         if (Instance == null)
         {
             Instance = this;
@@ -26,21 +26,19 @@ public class ScoreManager : MonoBehaviour
 
     void Start()
     {
-        UpdateScoreUI();
+        UpdateScoreText();
     }
 
-    // This is the function other scripts will call to add score
-    public void AddPoints(int pointsToAdd)
+    // Call this function from other scripts to add points
+    public void AddScore(int amount)
     {
-        currentScore += pointsToAdd;
-        UpdateScoreUI();
+        score += amount;
+        UpdateScoreText();
     }
 
-    private void UpdateScoreUI()
+    // Updates the actual text on the screen
+    void UpdateScoreText()
     {
-        if (scoreText != null)
-        {
-            scoreText.text = "SCORE: " + currentScore;
-        }
+        scoreText.text = "SCORE: " + score;
     }
 }
