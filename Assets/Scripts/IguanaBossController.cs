@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections; // Required for Coroutines (timing the attacks)
+using System.Collections;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class IguanaBossController : MonoBehaviour, IDamageable
 {
@@ -8,6 +10,13 @@ public class IguanaBossController : MonoBehaviour, IDamageable
     public int maxHealth = 100;
     private int currentHealth;
     public Slider bossHealthBar;
+    public TextMeshProUGUI healthText;
+    public GameObject damageTextPrefab;
+
+    [Header("Level Transition")]
+    [Tooltip("The exact name of the scene to load when the boss dies")]
+    public string nextSceneName = "WinScene";
+    public float delayBeforeLoading = 4f;
 
     [Header("Epic AI Settings")]
     public float moveSpeed = 12f;
@@ -16,8 +25,8 @@ public class IguanaBossController : MonoBehaviour, IDamageable
     public float attackCooldown = 2.5f;
 
     [Header("Attack Hitboxes")]
-    public GameObject tongueHitbox; // Drag Tongue.1 or Tongue.2 here
-    public GameObject biteHitbox;   // Drag BiteHitBox here
+    public GameObject tongueHitbox;
+    public GameObject biteHitbox;
 
     private IguanaCharacter iguanaCharacter;
     private Transform playerTarget;
@@ -33,6 +42,7 @@ public class IguanaBossController : MonoBehaviour, IDamageable
     {
         iguanaCharacter = GetComponent<IguanaCharacter>();
         currentHealth = maxHealth;
+        UpdateHealthUI();
 
         if (bossHealthBar != null)
         {
@@ -100,25 +110,25 @@ public class IguanaBossController : MonoBehaviour, IDamageable
 
     private IEnumerator AttackSequence()
     {
-        // 1. Set state to attacking so the Update loop doesn't run this twice
+        // 1. Set state to attacking
         currentState = BossState.Attacking;
 
-        // 2. TONGUE LASH PHASE
-        // If you have an Animator, trigger the tongue animation here!
-        if (tongueHitbox != null) tongueHitbox.SetActive(true);
-        yield return new WaitForSeconds(0.3f); // Tongue stays out for 0.3 seconds
-        if (tongueHitbox != null) tongueHitbox.SetActive(false);
+        // 2. Trigger the Slap Animation
+        iguanaCharacter.Attack();
 
-        // 3. WAIT A TINY BIT
-        yield return new WaitForSeconds(0.2f); // Brief pause before the bite
+        // 3. Wait a split second for the arm to actually swing forward in the animation
+        yield return new WaitForSeconds(0.2f);
 
-        // 4. BITE PHASE
-        iguanaCharacter.Attack(); // Triggers your original attack logic
+        // 4. Turn on the damage hitbox!
         if (biteHitbox != null) biteHitbox.SetActive(true);
-        yield return new WaitForSeconds(0.5f); // Bite hitbox stays active for 0.5 seconds
+
+        // 5. Keep the hitbox active while the arm is swinging
+        yield return new WaitForSeconds(0.4f);
+
+        // 6. Turn the hitbox off safely
         if (biteHitbox != null) biteHitbox.SetActive(false);
 
-        // 5. FINISH AND RETREAT
+        // 7. Finish and Retreat
         nextAttackTime = Time.time + attackCooldown;
         currentState = BossState.Retreating;
     }
@@ -133,11 +143,31 @@ public class IguanaBossController : MonoBehaviour, IDamageable
     public void TakeDamage(int damage)
     {
         if (isDead) return;
-        currentHealth -= damage;
-        if (bossHealthBar != null) bossHealthBar.value = currentHealth;
+        currentHealth = Mathf.Max(0, currentHealth - damage);
 
+        UpdateHealthUI();
         iguanaCharacter.Hit();
+
+        //FLOATING TEXT FEATURE
+        if (damageTextPrefab != null)
+        {
+            Vector3 spawnPos = transform.position + new Vector3(Random.Range(-1f, 1f), 3f, Random.Range(-1f, 1f));
+            GameObject textObj = Instantiate(damageTextPrefab, spawnPos, Quaternion.identity);
+
+            FloatingDamageText floatingText = textObj.GetComponent<FloatingDamageText>();
+            if (floatingText != null)
+            {
+                floatingText.Setup(damage);
+            }
+        }
+
         if (currentHealth <= 0) Die();
+    }
+
+    private void UpdateHealthUI()
+    {
+        if (bossHealthBar != null) bossHealthBar.value = currentHealth;
+        if (healthText != null) healthText.text = $"{currentHealth} / {maxHealth}";
     }
 
     private void Die()
@@ -147,8 +177,21 @@ public class IguanaBossController : MonoBehaviour, IDamageable
         iguanaCharacter.Death();
         GetComponent<Collider>().enabled = false;
 
+        // Clean up UI and weapons
         if (tongueHitbox != null) tongueHitbox.SetActive(false);
         if (biteHitbox != null) biteHitbox.SetActive(false);
         if (bossHealthBar != null) bossHealthBar.gameObject.SetActive(false);
+
+        // Start the countdown to load the next scene!
+        StartCoroutine(TransitionToNextScene());
+    }
+
+    private IEnumerator TransitionToNextScene()
+    {
+        // Wait for the death animation to play out
+        yield return new WaitForSeconds(delayBeforeLoading);
+
+        // Load the victory/loading screen
+        SceneManager.LoadScene(nextSceneName);
     }
 }

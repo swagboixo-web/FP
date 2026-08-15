@@ -12,6 +12,9 @@ public class AudioManager : MonoBehaviour
 
     [Header("Music")]
     [SerializeField] private AudioClip musicNormal;
+    [Tooltip("Time in seconds to skip into the normal music")]
+    [SerializeField] private float normalMusicStartTime = 0f;
+
     [SerializeField] private AudioClip musicBoss;
     [SerializeField] private AudioClip musicVictory;
     [SerializeField] private float crossfadeDuration = 1.5f;
@@ -23,12 +26,26 @@ public class AudioManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+
+        // This dynamically creates your Audio Sources so you don't have to!
         _musicA = gameObject.AddComponent<AudioSource>();
         _musicB = gameObject.AddComponent<AudioSource>();
         _sfxSource = gameObject.AddComponent<AudioSource>();
 
         _musicA.loop = true;
         _musicB.loop = true;
+    }
+
+    private void Start()
+    {
+        // Start the normal background music with the requested time skip!
+        if (musicNormal != null)
+        {
+            _musicA.clip = musicNormal;
+            _musicA.time = normalMusicStartTime; // Jumps to the exact second
+            _musicA.volume = 1f;
+            _musicA.Play();
+        }
     }
 
     private void OnEnable()

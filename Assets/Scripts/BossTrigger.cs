@@ -3,8 +3,8 @@ using UnityEngine;
 public class BossTrigger : MonoBehaviour
 {
     [Header("Camera Swap")]
-    public GameObject mainCamera; // Your scrolling camera
-    public GameObject bossCamera; // Your new stationary camera
+    public GameObject mainCamera; 
+    public GameObject bossCamera; 
 
     [Header("The Combatants")]
     public MosquitoController playerController;
@@ -27,7 +27,7 @@ public class BossTrigger : MonoBehaviour
             if (playerController != null)
                 playerController.bossFightActive = true;
 
-            // 3. Wake up the Iguana! (This cures the "statue" problem)
+            // 3. Wake up the Iguana!
             if (iguanaBoss != null)
                 iguanaBoss.StartDuel();
         }

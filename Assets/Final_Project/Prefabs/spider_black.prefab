@@ -689,10 +689,10 @@ GameObject:
   - component: {fileID: 156355035332087159}
   - component: {fileID: 201648432921746216}
   - component: {fileID: -6909158887900176292}
-  - component: {fileID: -8891347776185850666}
+  - component: {fileID: 7486297277953828360}
   m_Layer: 0
   m_Name: spider_black
-  m_TagString: Untagged
+  m_TagString: Spider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -705,9 +705,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3294702129341433100}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.98852193, z: -0, w: 0.15107742}
+  m_LocalRotation: {x: 0, y: -0.98852164, z: 0, w: 0.15107974}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6261794484464817351}
@@ -756,10 +756,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.47979748
-  m_Height: 2.0818539
-  m_Direction: 2
-  m_Center: {x: 0.0046396255, y: 0.9668031, z: -0.38928342}
+  m_Radius: 0.9368043
+  m_Height: 4.855411
+  m_Direction: 1
+  m_Center: {x: -0.15320523, y: 2.508241, z: -0.27608344}
 --- !u!54 &201648432921746216
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -785,7 +785,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!114 &-6909158887900176292
 MonoBehaviour:
@@ -799,9 +799,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e5fc232acf7dd849bd14d90ea30a4b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TrackingEnemyAI
-  moveSpeed: 3
-  detectionRange: 12
---- !u!114 &-8891347776185850666
+  fallbackMoveSpeed: 3
+  attackDistance: 1
+  attackCooldown: 1.5
+  biteDamage: 1
+  animator: {fileID: 6911845399829743313}
+--- !u!114 &7486297277953828360
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1434,7 +1437,7 @@ Transform:
   m_GameObject: {fileID: 5294204599295170257}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: -0, z: -13}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1954,7 +1957,7 @@ RectTransform:
   m_GameObject: {fileID: 6668354284908976040}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5218099276560686940}

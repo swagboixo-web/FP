@@ -86,6 +86,6 @@ public class EnemyHealth : MonoBehaviour, IDamageable
             healthBar.gameObject.SetActive(false);
         }
 
-        Destroy(gameObject, 2f);
+        Destroy(gameObject, 0.2f);
     }
 }

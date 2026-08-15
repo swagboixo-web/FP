@@ -1,22 +1,24 @@
 using UnityEngine;
 
-public class BossHitbox : MonoBehaviour
+public class bossbite : MonoBehaviour
 {
-    [Header("Hitbox Damage")]
-    public int attackDamage = 25;
+    [Header("Attack Damage")]
+    public int damageAmount = 25;
 
-    // Check if we hit the player
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            PlayerHealth pHealth = other.GetComponent<PlayerHealth>();
-            if (pHealth != null)
+            // Try to find the PlayerHealth script on the hit player
+            PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+
+            if (playerHealth != null)
             {
-                pHealth.TakeDamage(attackDamage);
+                playerHealth.TakeDamage(damageAmount);
+                Debug.Log("Iguana hit the player for " + damageAmount + " damage!");
             }
 
-            // Turn off the hitbox immediately so it doesn't hit twice in one swing
+            // Turn off hitbox immediately after hitting so it doesn't deal damage twice in one attack
             gameObject.SetActive(false);
         }
     }

@@ -8,10 +8,20 @@ public class PlayerShooting : MonoBehaviour
     [Tooltip("Where the bullet spawns (e.g., the mosquito's stinger)")]
     [SerializeField] private Transform firePoint;
 
-    [Tooltip("How fast the mosquito shoots (seconds between bullets)")]
-    [SerializeField] private float fireRate = 0.15f;
+    [Tooltip("The starting fire rate before any upgrades are bought!")]
+    [SerializeField] private float baseFireRate = 0.15f;
+
+    // We will store the upgraded speed here
+    private float currentFireRate;
 
     private float nextFireTime = 0f;
+
+    void Start()
+    {
+        // 1. READ THE UPGRADE: Check memory for an upgraded fire rate. 
+        // If the player hasn't bought any yet, it safely defaults to your baseFireRate (0.15).
+        currentFireRate = PlayerPrefs.GetFloat("PlayerFireRate", baseFireRate);
+    }
 
     void Update()
     {
@@ -21,8 +31,9 @@ public class PlayerShooting : MonoBehaviour
             if (Time.time >= nextFireTime)
             {
                 Shoot();
-                // Set the cooldown timer for the next bullet
-                nextFireTime = Time.time + fireRate;
+
+                // 2. Set the cooldown timer using the UPGRADED fire rate, not the base one!
+                nextFireTime = Time.time + currentFireRate;
             }
         }
     }

@@ -18,10 +18,10 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 1. Ask the object we hit: "Did you sign the IDamageable contract?"
+        
         IDamageable target = other.GetComponentInParent<IDamageable>();
 
-        // 2. If it is NOT null, it signed the contract! Hurt it!
+       
         if (target != null)
         {
             target.TakeDamage(damage);
@@ -29,12 +29,22 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // 3. Keep your old fallback just in case those old cubes are still around
+        
         if (other.gameObject.name.Contains("TrackingEnemy"))
         {
             Destroy(other.gameObject);
             // Assuming ScoreManager is a Singleton that still exists
             if (ScoreManager.Instance != null) ScoreManager.Instance.AddScore(1);
+            Destroy(gameObject);
+        }
+        if (other.CompareTag("Enemy"))
+        {
+            // Pull the upgraded damage from memory (defaults to 1)
+            int currentDamage = PlayerPrefs.GetInt("PlayerDamage", 1);
+
+            // Apply that damage to the enemy
+            other.GetComponent<EnemyHealth>().TakeDamage(currentDamage);
+
             Destroy(gameObject);
         }
     }
